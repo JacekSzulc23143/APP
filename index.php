@@ -11,16 +11,23 @@
                 echo session_id();
                 $_SESSION["loginUser"] = session_id();
                 // cookies
-                setcookie("logowanie", "Janek jest zalogowany do strony.", time()+120, "/");
+                if (!isset($_COOKIE['visitcount'])) {
+                    setcookie("visitcount", "1", time()+3600, "/");
+                } else {
+                    $count = $_COOKIE['visitcount'];
+                    setcookie("visitcount", $count+1, time()+3600, "/");
+                } 
+                setcookie("logowanie", "Janek jest zalogowany do strony.", time()+3600, "/");
             } else {
                 echo "BŁĘDNY LOGIN LUB HASŁO";
             }
         }
         echo $_POST["login"] . " " . $_POST["password"];
     }
-
+    
     if(isset($_POST["logout"])) {
         session_destroy();
+        setcookie("logowanie", "", time()-3600, "/");
         header("Location: index.php");
     }
 ?>
@@ -42,7 +49,8 @@
         <?php
             // cookies odczyt
             if(isset($_COOKIE["logowanie"])){
-                echo $_COOKIE["logowanie"];
+                echo $_COOKIE["logowanie"] . "<br>";
+                echo "Byłeś/aś " . $_COOKIE["visitcount"] . " razy zalogowany/a.";
             } else {
                 echo "Nie ustawiono ciasteczka!";
             }
