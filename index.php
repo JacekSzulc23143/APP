@@ -10,7 +10,9 @@
                 echo "Logowanie z sukcesem !!!";
                 echo session_id();
                 $_SESSION["loginUser"] = session_id();
-            }else{
+                // cookies
+                setcookie("logowanie", "Janek jest zalogowany do strony.", time()+120, "/");
+            } else {
                 echo "BŁĘDNY LOGIN LUB HASŁO";
             }
         }
@@ -38,6 +40,14 @@
 
     <div class="app-login-start">
         <?php
+            // cookies odczyt
+            if(isset($_COOKIE["logowanie"])){
+                echo $_COOKIE["logowanie"];
+            } else {
+                echo "Nie ustawiono ciasteczka!";
+            }
+
+            // sesja zalogowani
             if(isset($_SESSION["loginUser"])) {
         ?>
             <form action="index.php" method="post">
