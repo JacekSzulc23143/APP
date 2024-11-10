@@ -2,10 +2,7 @@
     $title = 'APP';
 
     // połączenie z bazą danych
-    $serverDB = "localhost";
-    $userDB = "root";
-    $passDB = "";
-    $DB = "appStore";
+    require("asdfghjvbnasdds12.php");
 
     if($conn = mysqli_connect($serverDB, $userDB, $passDB, $DB)){
         echo "Połączono z bazą <br>";
@@ -30,6 +27,7 @@
             foreach($users as $user) {
                 if($user["login"] == $_POST["login"] && $user["password"] == $_POST["password"]) {
                     $flag = true;
+                    setcookie("imie", $user["imie"], time()+3600, "/");
                     break;                    
                 }
             }
@@ -46,7 +44,9 @@
                     $count = $_COOKIE['visitcount'];
                     setcookie("visitcount", $count+1, time()+3600, "/");
                 } 
-                setcookie("logowanie", $user["login"] . " jest zalogowany/a do strony.", time()+3600, "/");
+                setcookie("logowanie", "$user[login] jest zalogowany/a do strony.", time()+3600, "/");
+
+                header("Location: sesja.php");
             } else {
                 echo "BŁĘDNY LOGIN LUB HASŁO ";
             }
