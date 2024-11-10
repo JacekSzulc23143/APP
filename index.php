@@ -1,15 +1,44 @@
 <?php
     $title = 'APP';
 
+    // połączenie z bazą danych
+    $serverDB = "localhost";
+    $userDB = "root";
+    $passDB = "";
+    $DB = "appStore";
+
+    if($conn = mysqli_connect($serverDB, $userDB, $passDB, $DB)){
+        echo "Połączono z bazą <br>";
+
+        $sql = "SELECT imie, nazwisko, email, login, password FROM users;";
+        $users = mysqli_query($conn, $sql);
+
+        // foreach($users as $user){
+        //     echo $user["imie"] . " " . $user["nazwisko"] . "<br>";
+        // }
+        mysqli_close($conn);
+    } else {
+        echo "Błąd połączenia. <br>";
+    }
+
     session_start();
-    $login = "janek";
-    $pass = "1234";
+    // $login = "janek";
+    // $pass = "1234";
     if(isset($_POST["submit"])) {
         if(isset($_POST["login"]) && isset($_POST["password"])) {
-            if($login == $_POST["login"] && $pass == $_POST["password"]) {
-                echo "Logowanie z sukcesem !!!";
-                echo session_id();
+            $flag = false;
+            foreach($users as $user) {
+                if($user["login"] == $_POST["login"] && $user["password"] == $_POST["password"]) {
+                    $flag = true;
+                    break;                    
+                }
+            }
+            // if($login == $_POST["login"] && $pass == $_POST["password"]) {
+            if($flag) {
+                echo "Logowanie z sukcesem !!! ";
+                echo session_id() . " ";
                 $_SESSION["loginUser"] = session_id();
+                
                 // cookies
                 if (!isset($_COOKIE['visitcount'])) {
                     setcookie("visitcount", "1", time()+3600, "/");
@@ -17,9 +46,9 @@
                     $count = $_COOKIE['visitcount'];
                     setcookie("visitcount", $count+1, time()+3600, "/");
                 } 
-                setcookie("logowanie", "Janek jest zalogowany do strony.", time()+3600, "/");
+                setcookie("logowanie", $user["login"] . " jest zalogowany/a do strony.", time()+3600, "/");
             } else {
-                echo "BŁĘDNY LOGIN LUB HASŁO";
+                echo "BŁĘDNY LOGIN LUB HASŁO ";
             }
         }
         echo $_POST["login"] . " " . $_POST["password"];
@@ -67,7 +96,7 @@
             <form action="index.php" method="post">
                 <div class="mb-3">
                     <label for="login" class="form-label">Login</label>
-                    <input type="text" class="form-control" id="login" name="login">
+                    <input type="text" class="form-control" id="login" name="login" autofocus>
                 </div>
                 <div class="mb-3">
                     <label for="password" class="form-label">Password</label>
